@@ -39,14 +39,14 @@ dgapi/
 git clone https://github.com/your-username/django-crud-api.git
 cd django-crud-api
 
-**### 2️⃣ Create virtual environment and activate**
+### 2️⃣ Create virtual environment and activate
 python -m venv venv
 source venv/bin/activate  # On Windows: venv\Scripts\activate
 
-**### 3️⃣ Install dependencies**
+### 3️⃣ Install dependencies
 pip install -r requirements.txt
 
-**### 4️⃣ Update database settings in crudapi/settings.py 🛠️**
+### 4️⃣ Update database settings in crudapi/settings.py 🛠️
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
@@ -58,15 +58,15 @@ DATABASES = {
     }
 }
 
-**### 5️⃣ Apply migrations**
+### 5️⃣ Apply migrations
 python manage.py makemigrations
 python manage.py migrate
 
 
-**### 6️⃣ Run the server**
+### 6️⃣ Run the server
 python manage.py runserver
 
-**🔗 API Endpoints**
+🔗 API Endpoints
 Method	Endpoint	Description
 GET	/students/	Get all students
 POST	/students/	Add a new student
@@ -76,23 +76,23 @@ DELETE	/students/{id}	Delete student by ID
 
 📍 You can test these endpoints using Thunder Client or Postman.
 
-**🧪 Sample JSON Body (for POST/PUT)**
+🧪 Sample JSON Body (for POST/PUT)
 {
   "name": "John Doe",
   "email": "john@example.com",
   "age": 21
 }
 
-**###✨ Tech Stack**
-**🐍 Python 3.x**
+###✨ Tech Stack
+🐍 Python 3.x
 
-**🦄 Django 4.x**
+🦄 Django 4.x
 
-**🔧 Django REST Framework**
+🔧 Django REST Framework
 
-**🐬 SQLITE3**
+🐬 SQLITE3
 
-**💻 Thunder Client / Postman (for testing)**
+💻 Thunder Client / Postman (for testing)
 
-**###🙌 Author**
-Made with **❤️** by **Parth Tank**
+🙌 Author
+Made with ❤️ by Parth Tank
