@@ -34,46 +34,44 @@ dgapi/
 
 ## ⚙️ Setup Instructions
 
-```bash
-# 1️⃣ Clone the repository
-git clone https://github.com/your-username/django-crud-api.git
-cd django-crud-api
+1️⃣ Clone the repository:  
+   ```sh
+   git clone https://github.com/parthtank554/internship-programs
+   cd django-crud-api
+   ```
 
-# 2️⃣ Create virtual environment and activate
-python -m venv venv
-# For macOS/Linux:
-source venv/bin/activate
-# For Windows:
-venv\Scripts\activate
+2️⃣ Create virtual environment and activate:  
+   ```sh
+   python -m venv venv
+   ```
 
-# 3️⃣ Install dependencies
-pip install -r requirements.txt
+3️⃣ Install dependencies:  
+   ```sh
+   pip install -r requirements.txt
+   ```
 
-# 4️⃣ Update database settings in dgapi/settings.py 🛠️
-# Open the file and replace the DATABASES section:
-# (Skip this if you're using SQLite)
-# 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.mysql',
-#         'NAME': 'your_db_name',
-#         'USER': 'your_username',
-#         'PASSWORD': 'your_password',
-#         'HOST': 'localhost',
-#         'PORT': '3306',
-#     }
-# }
-
-# 5️⃣ Apply migrations
-python manage.py makemigrations
-python manage.py migrate
-
-# 6️⃣ Run the development server
-python manage.py runserver
-
-# 7️⃣ Open browser or API client (Thunder Client/Postman)
-# Go to: http://127.0.0.1:8000/students/
-```
+4️⃣ Update database settings in crudapi/settings.py 🛠️:  
+   ```sh
+   DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'your_db_name',
+        'USER': 'your_username',
+        'PASSWORD': 'your_password',
+        'HOST': 'localhost',
+        'PORT': '3306',
+    }
+}
+   ```
+5️⃣ Apply migrations:  
+   ```sh
+   python manage.py makemigrations
+   python manage.py migrate
+   ```
+6️⃣ Run the server :
+   ```sh
+   python manage.py runserver
+   ```
 
 🔗 API Endpoints
 Method	Endpoint	Description
