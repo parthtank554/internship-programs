@@ -34,20 +34,25 @@ dgapi/
 
 ## ⚙️ Setup Instructions
 
-### 1️⃣ Clone the repository
-```bash
-git clone https://github.com/your-username/django-crud-api.git
-cd django-crud-api
+1️⃣ Clone the repository:  
+   ```sh
+   git clone https://github.com/parthtank554/internship-programs
+   cd django-crud-api
+   ```
 
-### 2️⃣ Create virtual environment and activate
-python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
+2️⃣ Create virtual environment and activate:  
+   ```sh
+   python -m venv venv
+   ```
 
-### 3️⃣ Install dependencies
-pip install -r requirements.txt
+3️⃣ Install dependencies:  
+   ```sh
+   pip install -r requirements.txt
+   ```
 
-### 4️⃣ Update database settings in crudapi/settings.py 🛠️
-DATABASES = {
+4️⃣ Update database settings in crudapi/settings.py 🛠️:  
+   ```sh
+   DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'your_db_name',
@@ -57,14 +62,16 @@ DATABASES = {
         'PORT': '3306',
     }
 }
-
-### 5️⃣ Apply migrations
-python manage.py makemigrations
-python manage.py migrate
-
-
-### 6️⃣ Run the server
-python manage.py runserver
+   ```
+5️⃣ Apply migrations:  
+   ```sh
+   python manage.py makemigrations
+   python manage.py migrate
+   ```
+6️⃣ Run the server :
+   ```sh
+   python manage.py runserver
+   ```
 
 🔗 API Endpoints
 Method	Endpoint	Description
