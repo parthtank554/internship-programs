@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h3>Upload New Story</h3>
+            </div>
+            <div class="card-body">
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label for="media" class="form-label">Upload Media</label>
+                        <input type="file" class="form-control" id="media" name="media" accept="image/*,video/*" required>
+                        <div class="form-text">Upload an image or video for your story.</div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="media_type" class="form-label">Media Type</label>
+                        <select class="form-select" id="media_type" name="media_type" required>
+                            <option value="image">Image</option>
+                            <option value="video">Video</option>
+                        </select>
+                    </div>
+                    <div class="mb-3" id="duration-field">
+                        <label for="duration" class="form-label">Duration (seconds)</label>
+                        <input type="number" class="form-control" id="duration" name="duration" value="30" min="5" max="60">
+                        <div class="form-text">How long should your story be visible? (5-60 seconds)</div>
+                    </div>
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary">Upload Story</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.getElementById('media_type').addEventListener('change', function() {
+        const durField = document.getElementById('duration-field');
+        if (this.value === 'video') {
+            durField.style.display = 'block';
+        } else {
+            durField.style.display = 'none';
+        }
+    });
+</script>
+{% endblock %}

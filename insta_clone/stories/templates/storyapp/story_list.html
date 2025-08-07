@@ -1,0 +1,8 @@
+<h2>Active Stories</h2>
+{% for s in stories %}
+    <div>
+        <a href="{% url 'story_detail' s.id %}">
+            {{ s.media_type|title }} by User ID {{ s.user_id }}
+        </a>
+    </div>
+{% endfor %}

@@ -1,0 +1,20 @@
+<h2>Story Details</h2>
+<p>Posted by: {{ story.username }}</p>
+<p>Media Type: {{ story.media_type }}</p>
+<p>Media URL: {{ story.media_url }}</p>
+
+<h3>Views ({{ views|length }})</h3>
+<ul>{% for v in views %}<li>User {{ v.user_id }}</li>{% endfor %}</ul>
+
+<h3>Likes ({{ likes|length }})</h3>
+<ul>{% for l in likes %}<li>User {{ l.user_id }}</li>{% endfor %}</ul>
+<a href="{% url 'like_story' story.id %}">Like</a>
+
+<h3>Replies</h3>
+<ul>{% for r in replies %}<li>{{ r.user_id }}: {{ r.message }}</li>{% endfor %}</ul>
+
+<form method="post" action="{% url 'reply_story' story.id %}">
+    {% csrf_token %}
+    <input type="text" name="message" placeholder="Reply...">
+    <button type="submit">Send</button>
+</form>

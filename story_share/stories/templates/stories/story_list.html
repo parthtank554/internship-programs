@@ -1,0 +1,116 @@
+ {% extends 'base.html' %} 
+
+    {% block content %} 
+    <!--<h2 class="mb-4">Recent Stories</h2>
+
+    <div class="row">
+        {% for story in stories %}
+        <div class="col-md-4">
+            <div class="story-card">
+                <div class="story-header">
+                    <img src="{{ story.profile_pic|default:'/media/default-profile.jpg' }}" alt="{{ story.username }}">
+                    <h5>{{ story.username }}</h5>
+                </div>
+                <div class="story-media">
+                    {% if story.media_type == 'image' %}
+                    <img src="{{ story.media_url }}" alt="Story">
+                    {% else %}
+                    <video controls>
+                        <source src="{{ story.media_url }}" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>
+                    {% endif %}
+                </div>
+                <div class="story-actions">
+                    <a href="{% url 'story_detail' story.id %}" class="btn btn-primary">View Details</a>
+                    <span>{{ story.created_at|date:"M d, Y" }}</span>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12">
+            <div class="alert alert-info">No stories available. Be the first to share!</div>
+        </div>
+        {% endfor %}
+    </div>-->
+   {% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Story Detail</title>
+    <style>
+        .story-container {
+            text-align: center;
+            padding: 40px;
+        }
+
+        .story-img, .story-video {
+            width: 350px;
+            height: 600px;
+            object-fit: contain;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+
+        .username {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        .timestamp {
+            font-size: 0.9rem;
+            color: gray;
+        }
+
+        .progress-bar-container {
+            width: 100%;
+            max-width: 400px;
+            height: 5px;
+            background-color: #e0e0e0;
+            margin: 10px auto 20px auto;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .progress {
+            height: 100%;
+            background-color: #007bff;
+            animation: progressAnim 10s linear forwards;
+        }
+
+        @keyframes progressAnim {
+            from { width: 0%; }
+            to { width: 100%; }
+        }
+    </style>
+</head>
+<body>
+    <div class="story-container">
+        <!-- Username -->
+        <div class="username">{{ story.username }}</div>
+
+        <!-- Progress Bar -->
+        <div class="progress-bar-container">
+            <div class="progress"></div>
+        </div>
+
+        <!-- Uploaded time -->
+        <div class="timestamp">Uploaded at: {{ story.created_at }}</div>
+
+        <!-- Media (image or video) -->
+        {% if story.media_type == "image" %}
+            <img src="{{ story.media_url }}" class="story-img" alt="Story Image">
+        {% elif story.media_type == "video" %}
+            <video class="story-video" controls autoplay muted>
+                <source src="{{ story.media_url }}" type="video/mp4">
+                Your browser does not support the video tag.
+            </video>
+        {% else %}
+            <p>Unsupported media type.</p>
+        {% endif %}
+    </div>
+</body>
+</html>
+
+    {% endblock %} 

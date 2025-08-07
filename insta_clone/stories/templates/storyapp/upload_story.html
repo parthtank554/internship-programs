@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Add New Story</title>
+</head>
+<body>
+    <h2>Add a New Story</h2>
+
+    <form method="post" enctype="multipart/form-data" action="{% url 'upload_story' %}" onsubmit="return validateForm()">
+        {% csrf_token %}
+        
+        <label for="media_type">Media Type:</label>
+        <select name="media_type" id="media_type" onchange="toggleDuration()">
+            <option value="image">Image</option>
+            <option value="video">Video</option>
+        </select><br><br>
+
+        <label for="media_url">Media File:</label>
+        <input type="file" name="media_url" id="media_url" accept="image/*,video/*" required><br><br>
+
+        <div id="durationField" style="display: none;">
+            <label for="duration">Duration (Seconds):</label>
+            <input type="number" name="duration" id="duration" min="1" max="30">
+            <small>Only required for video (max 30s)</small><br><br>
+        </div>
+
+        <button type="submit">Upload Story</button>
+    </form>
+
+    <script>
+        function toggleDuration() {
+            const type = document.getElementById('media_type').value;
+            const durationField = document.getElementById('durationField');
+            durationField.style.display = (type === 'video') ? 'block' : 'none';
+        }
+
+        function validateForm() {
+            const mediaType = document.getElementById('media_type').value;
+            const duration = parseInt(document.getElementById('duration').value);
+
+            if (mediaType === 'video') {
+                if (!duration || duration > 30) {
+                    alert("Video duration must be 30 seconds or less.");
+                    return false;
+                }
+            }
+            return true;
+        }
+    </script>
+</body>
+</html>

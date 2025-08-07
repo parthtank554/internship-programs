@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body text-center">
+                <img src="{{ user.profile_pic|default:'/media/default-profile.jpg' }}" alt="{{ user.username }}" class="profile-pic mb-3">
+                <h3>{{ user.full_name }}</h3>
+                <p class="text-muted">@{{ user.username }}</p>
+                <p>{{ user.email }}</p>
+                <a href="{% url 'edit_profile' %}" class="btn btn-primary">Edit Profile</a>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h3>My Stories</h3>
+                <a href="{% url 'upload_story' %}" class="btn btn-sm btn-primary">Upload New</a>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    {% for story in stories %}
+                    <div class="col-md-6 mb-4">
+                        <div class="story-card">
+                            <div class="story-media">
+                                {% if story.media_type == 'image' %}
+                                <img src="{{ story.media_url }}" alt="Story">
+                                {% else %}
+                                <video controls>
+                                    <source src="{{ story.media_url }}" type="video/mp4">
+                                    Your browser does not support the video tag.
+                                </video>
+                                {% endif %}
+                            </div>
+                            <div class="story-actions">
+                                <a href="{% url 'story_detail' story.id %}" class="btn btn-sm btn-primary">View Details</a>
+                                <span>{{ story.created_at|date:"M d, Y" }}</span>
+                            </div>
+                        </div>
+                    </div>
+                    {% empty %}
+                    <div class="col-12">
+                        <div class="alert alert-info">You haven't shared any stories yet.</div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
