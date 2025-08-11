@@ -168,14 +168,29 @@
             <a href="{% url 'story_detail' next_story_id %}" class="story-navigation right">›</a>
         {% endif %}
     </div>
+<script>
+// Auto redirect after 10 seconds
+const redirectUrl = "{% if next_story_id %}{% url 'story_detail' next_story_id %}{% else %}{% url 'story_detail' 1 %}{% endif %}";
+setTimeout(() => {
+    window.location.href = redirectUrl;
+}, 10000);
+</script>
+    <!-- <script>
+// Auto redirect after 10 seconds
+const nextStoryId = "{{ next_story_id|default:'' }}";
+let redirectUrl;
 
-    <script>
-    // Auto redirect after 10 seconds
-    const redirectUrl = "{% if next_story_id %}{% url 'story_detail' next_story_id %}{% else %}{% url 'home' %}{% endif %}";
-    setTimeout(() => {
-        window.location.href = redirectUrl;
-    }, 10000);
-    </script>
+if (nextStoryId) {
+    redirectUrl = `/story/${nextStoryId}/`;
+} else {
+    // Redirect to home or first story
+    redirectUrl = '/';  // Or '/story/1/' if you want to default to first story
+}
+
+setTimeout(() => {
+    window.location.href = redirectUrl;
+}, 10000);
+</script> -->
 </body>
 </html>
 {% endblock %}

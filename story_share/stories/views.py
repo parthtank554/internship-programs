@@ -67,9 +67,8 @@ def story_list(request):
 def story_detail(request, story_id):
     con = get_db_connection()
     cursor = con.cursor()
-
     # Call procedure to fetch single story with user info
-    cursor.callproc('GET_SINGLE_STORY_BY_ID', [story_id])
+    cursor.callproc('GETSINGLESTORYBYID', [story_id])
 
     story = None
     for result in cursor.stored_results():
@@ -90,7 +89,7 @@ def story_detail(request, story_id):
     if not story:
         return HttpResponse("Story not found.", status=404)
 
-    return render(request, 'story_detail.html', {
+    return render(request, 'stories/story_detail.html', {
         'story': story,
         'current_time': timezone.now()  # for time display
     })
@@ -128,7 +127,7 @@ def reply_story(request, story_id):
         user_id = request.session.get('user_id')
         story_ops.add_story_reply(user_id, story_id, message)
     
-    return redirect('story_detail', story_id=story_id)
+    return redirect('stories/story_detail', story_id=story_id)
 
 @login_required_session
 def profile(request):
