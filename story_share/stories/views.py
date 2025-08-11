@@ -212,6 +212,10 @@ class LogoutView(View):
 
 class StoryListView(View):
     def get(self, request):
+        if not request.session.get('user_id'):
+            return redirect('login')
+          # Fetch stories with follow validation
+        user_id = request.session['user_id']
         stories = story_ops.get_active_stories()
         return render(request, 'stories/story_list.html', {'stories': stories})
 
@@ -294,7 +298,6 @@ class ProfileView(View):
         user = user_ops.get_user_by_id(user_id)
         stories = story_ops.get_user_stories(user_id)
         return render(request, 'stories/profile.html', {'user': user, 'stories': stories})
-
 
 class EditProfileView(View):
     @login_required_session

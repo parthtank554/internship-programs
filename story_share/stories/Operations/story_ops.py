@@ -297,3 +297,23 @@ def get_story_replies(story_id):
         return replies
     finally:
         con.close()
+
+def get_viewable_stories(user_id):
+    con = get_db_connection()
+    cursor = con.cursor()
+    cursor.callproc('GET_VIEWABLE_STORIES', [user_id])
+    stories = []
+    for result in cursor.stored_results():
+        for row in result.fetchall():
+            stories.append({
+                'id': row[0],
+                'user_id': row[1],
+                'username': row[2],
+                'profile_pic': row[3],
+                'media_url': row[4],
+                'media_type': row[5],
+                'duration': row[6],
+                'created_at': row[7],
+            })
+    con.close()
+    return stories
