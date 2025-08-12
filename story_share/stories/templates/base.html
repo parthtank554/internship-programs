@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Story Share</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
     <style>
         .story-card {
             border-radius: 10px;
@@ -39,10 +40,37 @@
             border-radius: 50%;
             object-fit: cover;
         }
+        /* Bottom menu fix for mobile */
+        body {
+            padding-bottom: 60px;
+        }
     </style>
+    <script>
+document.addEventListener('DOMContentLoaded', function() {
+    var dropup = document.getElementById('plusDropupMenu');
+    var dropupMenu = document.getElementById('plusDropupMenuList');
+    var dropdown = new bootstrap.Dropdown(document.getElementById('plusDropup'));
+    var timer = null;
+
+    function showMenu() {
+        clearTimeout(timer);
+        dropdown.show();
+    }
+    function hideMenu() {
+        timer = setTimeout(function() {
+            dropdown.hide();
+        }, 150); // Small delay to allow moving between button and menu
+    }
+
+    dropup.addEventListener('mouseenter', showMenu);
+    dropup.addEventListener('mouseleave', hideMenu);
+    dropupMenu.addEventListener('mouseenter', showMenu);
+    dropupMenu.addEventListener('mouseleave', hideMenu);
+});
+</script>
 </head>
 <body>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <!-- <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <div class="container">
             <a class="navbar-brand" href="{% url 'story_list' %}">Story Share</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
@@ -71,11 +99,73 @@
                 </ul>
             </div>
         </div>
-    </nav>
+    </nav> -->
 
+    <!-- Main content block for all pages (forms, story list, etc.) -->
     <div class="container mt-4">
-        {% block content %}{% endblock %}
+        {% block content %}
+        {% endblock %}
     </div>
+
+    <!-- Instagram-style bottom navigation menu -->
+    <nav class="navbar fixed-bottom navbar-light bg-white border-top" style="height: 56px; z-index: 1050;">
+        <div class="container d-flex justify-content-between align-items-center px-0">
+            <a class="nav-link text-center" href="{% url 'story_list' %}">
+                <i class="bi bi-house-door" style="font-size: 1.7em;"></i>
+            </a>
+            <a class="nav-link text-center" href="{% url 'search' %}">
+                <i class="bi bi-search" style="font-size: 1.7em;"></i>
+            </a>
+            <!-- Dropup menu for the "+" button in the bottom navbar -->
+            <div class="dropup" id="plusDropupMenu">
+                <a class="nav-link text-center" href="#" id="plusDropup" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="bi bi-plus-square" style="font-size: 1.7em;"></i>
+                </a>
+                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="plusDropup">
+                    <li><a class="dropdown-item" href="{% url 'upload_post' %}">Post</a></li>
+                    <li><a class="dropdown-item" href="{% url 'upload_story' %}">Story</a></li>
+                </ul>
+            </div>
+            {% if request.session.user_id %}
+    <div class="dropup" id="profileDropupMenu" style="display: inline-block;">
+        <a class="nav-link text-center" href="#" id="profileDropup" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <i class="bi bi-person-circle" style="font-size: 1.7em;"></i>
+        </a>
+        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropup" id="profileDropupMenuList">
+            <li><a class="dropdown-item" href="{% url 'profile' %}">Profile</a></li>
+            <li><a class="dropdown-item" href="{% url 'logout' %}">Logout</a></li>
+        </ul>
+    </div>
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var dropup = document.getElementById('profileDropupMenu');
+        var dropupMenu = document.getElementById('profileDropupMenuList');
+        var dropdown = new bootstrap.Dropdown(document.getElementById('profileDropup'));
+        var timer = null;
+
+        function showMenu() {
+            clearTimeout(timer);
+            dropdown.show();
+        }
+        function hideMenu() {
+            timer = setTimeout(function() {
+                dropdown.hide();
+            }, 150);
+        }
+
+        dropup.addEventListener('mouseenter', showMenu);
+        dropup.addEventListener('mouseleave', hideMenu);
+        dropupMenu.addEventListener('mouseenter', showMenu);
+        dropupMenu.addEventListener('mouseleave', hideMenu);
+    });
+    </script>
+{% else %}
+    <a class="nav-link text-center" href="{% url 'login' %}">
+        <i class="bi bi-person-circle" style="font-size: 1.7em;"></i>
+    </a>
+{% endif %}
+        </div>
+    </nav>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 </body>

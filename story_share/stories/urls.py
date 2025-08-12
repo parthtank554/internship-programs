@@ -44,8 +44,14 @@ urlpatterns = [
     path('upload/', UploadStoryView.as_view(), name='upload_story'),
     path('story/<int:story_id>/like/', LikeStoryView.as_view(), name='like_story'),
     path('story/<int:story_id>/reply/', ReplyStoryView.as_view(), name='reply_story'),
+    path('delete_story/<int:story_id>/', views.DeleteStoryView.as_view(), name='delete_story'),
 
     # Profile URLs
     path('profile/', ProfileView.as_view(), name='profile'),
     path('profile/edit/', EditProfileView.as_view(), name='edit_profile'),
+    path('follow/<str:username>/', views.FollowUserView.as_view(), name='follow_user'),
+    path('unfollow/<str:username>/', views.UnfollowUserView.as_view(), name='unfollow_user'),
+    path('inbox/', views.InboxView.as_view(), name='inbox'),
+    path('search/', views.SearchView.as_view(), name='search'),
+    path('upload_post/', views.UploadPostView.as_view(), name='upload_post'),
 ]

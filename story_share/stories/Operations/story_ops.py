@@ -317,3 +317,12 @@ def get_viewable_stories(user_id):
             })
     con.close()
     return stories
+
+def delete_story(user_id, story_id):
+    con = get_db_connection()
+    cursor = con.cursor(dictionary=True)
+    try:
+        cursor.execute("DELETE FROM stories WHERE id=%s AND user_id=%s", (story_id, user_id))
+        con.commit()
+    finally:
+        con.close()

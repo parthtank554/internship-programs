@@ -75,3 +75,36 @@ def authenticate_user(username, password):
     if user and user['password'] == hash_password(password):
         return user
     return None
+
+def follow_user(follower_id, username):
+    con = get_db_connection()
+    cursor = con.cursor()
+    try:
+        # Get the user_id of the user to be followed
+        # cursor.execute("SELECT id FROM users WHERE username=%s", (username,))
+        cursor.callproc('FollowUser', (follower_id, username))
+        result = cursor.fetchone()
+        if result:
+            followed_id = result[0]
+            # Insert into followers table (adjust table/column names as needed)
+            # cursor.execute(
+            #     "INSERT IGNORE INTO followers (follower_id, followed_id) VALUES (%s, %s)",
+            #     (follower_id, followed_id)
+            # )
+            cursor.callproc('FollowUser', (follower_id, username))
+            con.commit()
+    finally:
+        con.close()
+
+def unfollow_user(follower_id, username):
+    con = get_db_connection()
+    cursor = con.cursor()
+    try:
+        cursor.callproc('UnfollowUser', (follower_id, username))
+        result = cursor.fetchone()
+        if result:
+            followed_id = result[0]
+            cursor.callproc('UnfollowUser', (follower_id, username))
+            con.commit()
+    finally:
+        con.close()

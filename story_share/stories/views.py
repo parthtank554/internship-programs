@@ -153,12 +153,16 @@ from django.core.files.storage import FileSystemStorage
 from django.conf import settings
 from .Operations import user_ops, story_ops
 import os
-from django.http import HttpResponse, Http404
+from django.http import HttpResponse, Http404, HttpResponseRedirect
 from django.utils import timezone
 from .decorators import login_required_session
 from .Operations.story_ops import *
 from .Operations import *
 from django.views import View
+from django.urls import reverse
+
+from django.views.generic import ListView
+from collections import OrderedDict
 # -------------------- Authentication Views --------------------
 
 class RegisterView(View):
@@ -214,11 +218,24 @@ class StoryListView(View):
     def get(self, request):
         if not request.session.get('user_id'):
             return redirect('login')
-          # Fetch stories with follow validation
         user_id = request.session['user_id']
-        stories = story_ops.get_active_stories()
-        return render(request, 'stories/story_list.html', {'stories': stories})
+        all_stories = story_ops.get_active_stories()  # This should return a list of dicts
 
+        # Group all stories by user_id: each user gets a list of their stories
+        user_stories_map = OrderedDict()
+        for story in sorted(all_stories, key=lambda s: (s['user_id'], s['created_at'])):
+            uid = story['user_id']
+            if uid not in user_stories_map:
+                user_stories_map[uid] = {
+                    'user_id': uid,
+                    'username': story['username'],
+                    'profile_pic': story.get('profile_pic'),
+                    'stories': []
+                }
+            user_stories_map[uid]['stories'].append(story)
+
+        # Pass user_stories to the template (one circle per user, all their stories inside)
+        return render(request, 'stories/story_list.html', {'user_stories': user_stories_map.values()})
 
 class StoryDetailView(View):
     def get(self, request, story_id):
@@ -296,8 +313,10 @@ class ProfileView(View):
     def get(self, request):
         user_id = request.session.get('user_id')
         user = user_ops.get_user_by_id(user_id)
+        is_own_profile = (request.user.username == user_id)
         stories = story_ops.get_user_stories(user_id)
-        return render(request, 'stories/profile.html', {'user': user, 'stories': stories})
+        return render(request, 'stories/profile.html', {'user': user, 'stories': stories, 'is_own_profile': is_own_profile})
+        
 
 class EditProfileView(View):
     @login_required_session
@@ -320,3 +339,49 @@ class EditProfileView(View):
 
         user_ops.update_user_profile(user_id, full_name, profile_pic)
         return redirect('profile')
+
+class FollowUserView(View):
+    @login_required_session
+    def post(self, request, username):
+        user_id = request.session.get('user_id')
+        # Implement your follow logic here, e.g.:
+        user_ops.follow_user(user_id, username)
+        return HttpResponseRedirect(request.META.get('HTTP_REFERER', reverse('profile')))
+
+class UnfollowUserView(View):
+    @login_required_session
+    def post(self, request, username):
+        user_id = request.session.get('user_id')
+        # Implement your unfollow logic here, e.g.:
+        user_ops.unfollow_user(user_id, username)
+        return HttpResponseRedirect(request.META.get('HTTP_REFERER', reverse('profile')))
+
+class InboxView(View):
+    @login_required_session
+    def get(self, request):
+        user_id = request.session.get('user_id')
+        # Fetch messages for the user
+        messages = user_ops.get_user_messages(user_id) if hasattr(user_ops, 'get_user_messages') else []
+        return render(request, 'stories/inbox.html', {'messages': messages})
+    
+class DeleteStoryView(View):
+    @login_required_session
+    def post(self, request, story_id):
+        user_id = request.session.get('user_id')
+        # Implement your delete logic here
+        story_ops.delete_story(user_id, story_id)
+        return HttpResponseRedirect(request.META.get('HTTP_REFERER', reverse('profile')))
+    
+class SearchView(View):
+    def get(self, request):
+        # You can add search logic here
+        return render(request, 'stories/profile.html')
+    
+class UploadPostView(View):
+    def get(self, request):
+        return render(request, 'stories/upload_post.html')
+
+    def post(self, request):
+        # Handle post upload logic here
+        # For now, just redirect to home or story_list
+        return redirect('story_list')

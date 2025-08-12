@@ -1,53 +1,113 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<div class="row">
-    <div class="col-md-4">
-        <div class="card">
-            <div class="card-body text-center">
-                <img src="{{ user.profile_pic|default:'/media/default-profile.jpg' }}" alt="{{ user.username }}" class="profile-pic mb-3">
-                <h3>{{ user.full_name }}</h3>
-                <p class="text-muted">@{{ user.username }}</p>
-                <p>{{ user.email }}</p>
-                <a href="{% url 'edit_profile' %}" class="btn btn-primary">Edit Profile</a>
+<div class="container" style="max-width: 500px; margin: 0 auto;">
+    <div class="d-flex align-items-center mt-4 mb-3">
+        <div style="position: relative;">
+            {% if user_story %}
+                <a href="{% url 'story_detail' user_story.id %}" style="display:inline-block; position:relative;">
+                    <svg width="98" height="98" style="position:absolute; top:0; left:0; z-index:1;">
+                        <circle cx="49" cy="49" r="47" stroke="#ff0050" stroke-width="4" fill="none"
+                                style="stroke-dasharray:295; stroke-dashoffset:0;" />
+                    </svg>
+                    <img src="{{ user.profile_pic|default:'/media/default-profile.jpg' }}"
+                         alt="{{ user.username }}"
+                         class="rounded-circle"
+                         style="width: 90px; height: 90px; object-fit: cover; border: 2px solid #fff; position:relative; z-index:2;">
+                </a>
+            {% else %}
+                <img src="{{ user.profile_pic|default:'/media/default-profile.jpg' }}"
+                     alt="{{ user.username }}"
+                     class="rounded-circle"
+                     style="width: 90px; height: 90px; object-fit: cover; border: 2px solid #ddd;">
+            {% endif %}
+            {% if not is_own_profile %}
+                <span style="position: absolute; bottom: 0; right: 0;">
+                    <a href="{% url 'upload_story' %}">
+                        <button class="btn btn-primary btn-sm rounded-circle" style="width:32px; height:32px; padding:0;">
+                            <span style="font-size: 20px;">+</span>
+                        </button>
+                    </a>
+                </span>
+            {% endif %}
+        </div>
+        <div class="ms-4 flex-grow-1">
+            <div class="d-flex align-items-center">
+                <h4 class="mb-0">{{ user.username }}</h4>
+                {% if is_own_profile %}
+                    <button class="btn btn-outline-secondary btn-sm ms-2"><i class="bi bi-three-dots"></i></button>
+                {% endif %}
+            </div>
+            <div class="d-flex mt-2">
+                <div class="me-4 text-center">
+                    <strong>{{ posts_count|default:"0" }}</strong><br>Posts
+                </div>
+                <div class="me-4 text-center">
+                    <strong>{{ followers_count|default:"0" }}</strong><br>Followers
+                </div>
+                <div class="text-center">
+                    <strong>{{ following_count|default:"0" }}</strong><br>Following
+                </div>
             </div>
         </div>
     </div>
-    
-    <div class="col-md-8">
-        <div class="card">
-            <div class="card-header d-flex justify-content-between align-items-center">
-                <h3>My Stories</h3>
-                <a href="{% url 'upload_story' %}" class="btn btn-sm btn-primary">Upload New</a>
-            </div>
-            <div class="card-body">
-                <div class="row">
-                    {% for story in stories %}
-                    <div class="col-md-6 mb-4">
-                        <div class="story-card">
-                            <div class="story-media">
-                                {% if story.media_type == 'image' %}
-                                <img src="{{ story.media_url }}" alt="Story">
-                                {% else %}
-                                <video controls>
-                                    <source src="{{ story.media_url }}" type="video/mp4">
-                                    Your browser does not support the video tag.
-                                </video>
-                                {% endif %}
-                            </div>
-                            <div class="story-actions">
-                                <a href="{% url 'story_detail' story.id %}" class="btn btn-sm btn-primary">View Details</a>
-                                <span>{{ story.created_at|date:"M d, Y" }}</span>
-                            </div>
-                        </div>
-                    </div>
-                    {% empty %}
-                    <div class="col-12">
-                        <div class="alert alert-info">You haven't shared any stories yet.</div>
-                    </div>
-                    {% endfor %}
+    <div class="text-start mb-2">
+        <strong>{{ user.full_name }}</strong>
+        {% if user.pronouns %}
+            <span class="text-muted" style="font-size: 0.9em;">{{ user.pronouns }}</span>
+        {% endif %}
+        <div>{{ user.bio }}</div>
+    </div>
+
+    {% if not is_own_profile %}
+        <div class="d-grid mb-3">
+            <a href="{% url 'edit_profile' %}" class="btn btn-light border">Edit profile</a>
+        </div>
+    {% else %}
+        <div class="d-flex mb-3 gap-2">
+            <button class="btn btn-outline-primary">Follow</button>
+            <a href="#" class="btn btn-light border">Message</a>
+        </div>
+    {% endif %}
+
+    {% if is_own_profile %}
+    <!-- Discover People Section -->
+    <div class="mt-4">
+        <div class="d-flex justify-content-between align-items-center mb-2">
+            <span class="fw-bold">Discover people</span>
+            <a href="#" class="text-primary" style="font-size: 0.95em;">See all</a>
+        </div>
+        <div class="d-flex">
+            {% for suggestion in suggestions %}
+            <div class="card me-2" style="width: 120px;">
+                <div class="card-body p-2 text-center">
+                    <img src="{{ suggestion.profile_pic|default:'/media/default-profile.jpg' }}" class="rounded-circle mb-1" style="width: 48px; height: 48px; object-fit: cover;">
+                    <div class="fw-bold" style="font-size: 0.95em;">{{ suggestion.username }}</div>
+                    <div class="text-muted" style="font-size: 0.8em;">{{ suggestion.subtitle }}</div>
+                    <button class="btn btn-primary btn-sm mt-1" style="width: 100%;">Follow</button>
                 </div>
             </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Posts grid (empty state) -->
+    <div class="mt-4">
+        <div class="d-flex justify-content-center mb-2">
+            <button class="btn btn-link"><i class="bi bi-grid-3x3-gap-fill" style="font-size: 1.5em;"></i></button>
+            <button class="btn btn-link"><i class="bi bi-person" style="font-size: 1.5em;"></i></button>
+        </div>
+        <div class="row">
+            {% if posts %}
+                {% for post in posts %}
+                <div class="col-4 mb-2">
+                    <img src="{{ post.image_url }}" class="img-fluid" style="aspect-ratio:1/1; object-fit:cover;">
+                </div>
+                {% endfor %}
+            {% else %}
+                <div class="text-center text-muted" style="margin-top: 40px;">No posts yet</div>
+            {% endif %}
         </div>
     </div>
 </div>
