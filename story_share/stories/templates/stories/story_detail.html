@@ -117,6 +117,7 @@
     </style>
 </head>
 <body>
+
     <div class="story-viewer">
 
         <!-- Progress Bar -->
@@ -125,13 +126,14 @@
         </div>
 
        <div class="story-header">
-    <img src="{{ story.profile_pic|default:'/media/default-profile.jpg' }}" alt="{{ story.username }}" width="40" height="40" style="border-radius: 50%;">
+    {% comment %} <img src="{{ story.profile_pic|default:'/media/default-profile.jpg' }}" alt="{{ story.username }}" width="40" height="40" style="border-radius: 50%;"> {% endcomment %}
+    <img src="{{ MEDIA_URL }}{{ user.profile_pic }}" alt="{{ user.username }}" width="40" height="40" style="border-radius: 50%;">
     <h5>{{ story.username }}</h5>
     <small>{{ story.created_at|timesince }} ago | {{ current_time|date:"h:i A" }}</small>
 </div>
 
 <!-- Media -->
-<div class="story-media">
+{% comment %} <div class="story-media">
     {% if story.media_type == 'image' %}
         <img src="{{ story.media_url }}" alt="Story" style="max-width: 100%; max-height: 80vh;">
     {% else %}
@@ -139,21 +141,34 @@
             <source src="{{ story.media_url }}" type="video/mp4">
         </video>
     {% endif %}
+</div> {% endcomment %}
+
+
+<div class="story-media" style="text-align: center;">
+    {% if story.media_type == 'image' %}
+        <img src="{{ story.media_url }}" alt="Story" style="max-width: 100%; max-height: 80vh;">
+    {% elif story.media_type == 'video' %}
+        <video autoplay controls muted style="max-width: 100%; max-height: 80vh;">
+            <source src="{{ story.media_url }}" type="video/mp4">
+        </video>
+    {% else %}
+        <p class="text-danger">Unsupported media type.</p>
+    {% endif %}
 </div>
 
         <!-- Reply and Like -->
         <div class="story-actions">
             {% if story.id %}
-                <form method="post" action="{% url 'reply_story' story.id %}" class="d-flex w-100">
+                {% comment %} <form method="post" action="{% url 'reply_story' story.id %}" class="d-flex w-100"> {% endcomment %}
                     {% csrf_token %}
                     <input type="text" name="message" class="form-control" placeholder="Reply..." required>
                     <button type="submit" class="btn btn-primary">Send</button>
                 </form>
 
                 {% if user_has_liked %}
-                    <a href="{% url 'unlike_story' story.id %}" class="btn btn-outline-light">💔 ({{ likes|length }})</a>
+                    {% comment %} <a href="{% url 'unlike_story' story.id %}" class="btn btn-outline-light">💔 ({{ likes|length }})</a> {% endcomment %}
                 {% else %}
-                    <a href="{% url 'like_story' story.id %}" class="btn btn-outline-light">❤ ({{ likes|length }})</a>
+                    {% comment %} <a href="{% url 'like_story' story.id %}" class="btn btn-outline-light">❤ ({{ likes|length }})</a> {% endcomment %}
                 {% endif %}
             {% else %}
                 <p class="text-danger">Story ID missing. Cannot send reply.</p>

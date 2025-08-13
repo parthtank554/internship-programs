@@ -1,6 +1,8 @@
 from django.urls import path
 from . import views
 from .views import *
+from django.conf import settings
+from django.conf.urls.static import static
 
 # urlpatterns = [
 #     # Authentication URLs
@@ -54,4 +56,4 @@ urlpatterns = [
     path('inbox/', views.InboxView.as_view(), name='inbox'),
     path('search/', views.SearchView.as_view(), name='search'),
     path('upload_post/', views.UploadPostView.as_view(), name='upload_post'),
-]
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

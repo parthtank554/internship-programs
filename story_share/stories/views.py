@@ -218,10 +218,9 @@ class StoryListView(View):
     def get(self, request):
         if not request.session.get('user_id'):
             return redirect('login')
-        user_id = request.session['user_id']
-        all_stories = story_ops.get_active_stories()  # This should return a list of dicts
+        all_stories = story_ops.get_active_stories()  # List of dicts
 
-        # Group all stories by user_id: each user gets a list of their stories
+        # Group stories by user_id
         user_stories_map = OrderedDict()
         for story in sorted(all_stories, key=lambda s: (s['user_id'], s['created_at'])):
             uid = story['user_id']
@@ -234,38 +233,44 @@ class StoryListView(View):
                 }
             user_stories_map[uid]['stories'].append(story)
 
-        # Pass user_stories to the template (one circle per user, all their stories inside)
         return render(request, 'stories/story_list.html', {'user_stories': user_stories_map.values()})
 
 class StoryDetailView(View):
     def get(self, request, story_id):
         con = get_db_connection()
         cursor = con.cursor()
-        cursor.callproc('GETSINGLESTORYBYID', [story_id])
 
-        story = None
-        for result in cursor.stored_results():
-            row = result.fetchone()
-            if row:
-                story = {
-                    'id': row[0],
-                    'user_id': row[1],
-                    'username': row[2],
-                    'profile_pic': row[3],
-                    'media_url': row[4],
-                    'media_type': row[5],
-                    'duration': row[6],
-                    'created_at': row[7],
-                }
-        con.close()
+        try:
+            cursor.callproc('GETSINGLESTORYBYID', [None])
 
-        if not story:
-            return HttpResponse("Story not found.", status=404)
+            story = None
+            for result in cursor.stored_results():
+                row = result.fetchall()
+                print("DEBUG rows:", row)  # See exactly what is coming back
+                if row:
+                    story = {
+                        'id': row[0],
+                        'user_id': row[1],
+                        # 'username': row[2],
+                        # 'profile_pic': row[3],
+                        # 'media_url': row[4],
+                        'media_type': row[5],
+                        'duration': row[6],
+                        'created_at': row[7],
+                    }
 
-        return render(request, 'stories/story_detail.html', {
-            'story': story,
-            'current_time': timezone.now()
-        })
+            if not story:
+                return HttpResponse("Story not found.", status=404)
+
+            return render(request, 'stories/story_detail.html', {
+                'story': story,
+                'current_time': timezone.now(),
+                'user': request.user 
+            })
+
+        finally:
+            cursor.close()
+            con.close()
 
 
 class UploadStoryView(View):
@@ -304,7 +309,6 @@ class ReplyStoryView(View):
         user_id = request.session.get('user_id')
         story_ops.add_story_reply(user_id, story_id, message)
         return redirect('story_detail', story_id=story_id)
-
 
 # -------------------- Profile Views --------------------
 
